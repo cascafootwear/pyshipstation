@@ -1,10 +1,12 @@
 import datetime
-from decimal import Decimal
 import json
 import pprint
+from decimal import Decimal
+
 import requests
-from shipstation.models import *
+
 from shipstation.constants import *
+from shipstation.models import *
 
 
 class ShipStation(ShipStationBase):
@@ -37,6 +39,10 @@ class ShipStation(ShipStationBase):
 
     def get_orders(self):
         return self.orders
+
+    def submit_an_order(self, order):
+        self.require_type(order, ShipStationOrder)
+        return self.post(endpoint="/orders/createorder", data=json.dumps(order.as_dict()))
 
     def submit_orders(self):
         for order in self.orders:

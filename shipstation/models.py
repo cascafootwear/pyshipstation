@@ -1,6 +1,7 @@
-from shipstation.constants import *
-from decimal import Decimal
 import datetime
+from decimal import Decimal
+
+from shipstation.constants import *
 
 __all__ = [
     "ShipStationAddress",
@@ -77,7 +78,7 @@ class ShipStationCustomsItem(ShipStationBase):
         self.require_attribute("country_of_origin")
         self.require_attribute("description")
         self.require_type(value, Decimal)
-        if len(self.country_of_origin) is not 2:
+        if len(self.country_of_origin) != 2:
             raise AttributeError("country_of_origin must be two characters")
 
 
@@ -179,13 +180,10 @@ class ShipStationItem(ShipStationBase):
 
     def as_dict(self):
         d = super(ShipStationItem, self).as_dict()
+        if self.weight:
+            d["weight"] = self.weight.as_dict()
 
-        return __setattr__(d, "weight", self.weight.as_dict()) if self.weight else d
-
-        # if self.weight:
-        #     d["weight"] = self.weight.as_dict()
-        #
-        # return d
+        return d
 
 
 class ShipStationAddress(ShipStationBase):
@@ -213,6 +211,7 @@ class ShipStationAddress(ShipStationBase):
         self.postal_code = postal_code
         self.phone = phone
         self.residential = residential
+        self.country = country
 
 
 class ShipStationOrder(ShipStationBase):
@@ -333,33 +332,6 @@ class ShipStationOrder(ShipStationBase):
         d["internationalOptions"] = self.get_international_options_as_dict()
 
         return d
-
-
-class ShipStationAddress(ShipStationBase):
-    def __init__(
-        self,
-        name=None,
-        company=None,
-        street1=None,
-        street2=None,
-        street3=None,
-        city=None,
-        state=None,
-        postal_code=None,
-        country=None,
-        phone=None,
-        residential=None,
-    ):
-        self.name = name
-        self.company = company
-        self.street1 = street1
-        self.street2 = street2
-        self.street3 = street3
-        self.city = city
-        self.state = state
-        self.postal_code = postal_code
-        self.phone = phone
-        self.residential = residential
 
 
 class ShipStationAdvancedOptions(ShipStationBase):
