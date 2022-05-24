@@ -139,17 +139,15 @@ class ShipStationContainer(ShipStationBase):
         self.weight = weight
 
     def set_units(self, units):
-        self.require_membership(units)
+        self.require_membership(units, ["pounds", "ounces", "grams"])
         self.units = units
 
     def as_dict(self):
         d = super(ShipStationContainer, self).as_dict()
-        return __setattr__(d, "weight", self.weight.as_dict()) if self.weight else d
-        #
-        # if self.weight:
-        #     d["weight"] = self.weight.as_dict()
-        #
-        # return d
+        if self.weight:
+            d["weight"] = self.weight.as_dict()
+
+        return d
 
 
 class ShipStationItem(ShipStationBase):
@@ -242,6 +240,7 @@ class ShipStationOrder(ShipStationBase):
         self.internal_notes = None
         self.gift = None
         self.payment_method = None
+        self.requested_shipping_service = None
         self.carrier_code = None
         self.service_code = None
         self.package_code = None
@@ -292,7 +291,6 @@ class ShipStationOrder(ShipStationBase):
         return self.order_date
 
     def get_weight(self):
-        weight = 0
         items = self.get_items()
         weight = sum([item.weight.value * item.quantity for item in items])
         if self.dimensions and self.dimensions.weight:
@@ -330,6 +328,13 @@ class ShipStationOrder(ShipStationBase):
         d["shipTo"] = self.get_shipping_address_as_dict()
         d["weight"] = self.get_weight()
         d["internationalOptions"] = self.get_international_options_as_dict()
+        d["requestedShippingService"] = self.requested_shipping_service
+        d["carrierCode"] = self.carrier_code
+        d["serviceCode"] = self.service_code
+        d["internalNotes"] = self.internal_notes
+        d["amountPaid"] = self.amount_paid
+        d["shippingAmount"] = self.shipping_amount
+        d["taxAmount"] = self.tax_amount
 
         return d
 
@@ -345,7 +350,7 @@ class ShipStationAdvancedOptions(ShipStationBase):
         custom_field_1=None,
         custom_field_2=None,
         custom_field_3=None,
-        soure=None,
+        source=None,
         merged_or_split=None,
         merged_ids=None,
         bill_to_party=None,
@@ -387,6 +392,7 @@ class ShipStationStatusMapping(ShipStationBase):
 
 class ShipStationStore(ShipStationBase):
     def __init__(
+        self,
         store_id=None,
         store_name=None,
         marketplace_id=None,

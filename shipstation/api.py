@@ -30,7 +30,7 @@ class ShipStation(ShipStationBase):
         self.key = key
         self.secret = secret
         self.orders = []
-        self.timeout = 1.0
+        self.timeout = 10.0
         self.debug = debug
 
     def add_order(self, order):
