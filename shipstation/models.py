@@ -74,7 +74,6 @@ class ShipStationCustomsItem(ShipStationBase):
         self.country_of_origin = country_of_origin
 
         self.require_attribute("description")
-        self.require_attribute("harmonized_tariff_code")
         self.require_attribute("country_of_origin")
         self.require_attribute("description")
         self.require_type(value, Decimal)
